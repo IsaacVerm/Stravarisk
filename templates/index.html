@@ -5,12 +5,11 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
-    <h1>Stravarisk</h1>
     <script src="{{ url_for('static', filename='app.js') }}"></script>
     <div id="places">
-        <div class="place" style="background-color: aquamarine;"></div>
-        <div class="place" style="background-color: rgb(255, 127, 144);"></div>
-        <div class="place" style="background-color: rgb(255, 255, 127);"></div>
+        {% for place in places %}
+        <div name="{{ place.name }}" class="place" style="background-color: {{ place.color }};"></div>
+        {% endfor %}
     </div>
 </body>
 </html>
