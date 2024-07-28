@@ -47,21 +47,17 @@ def home():
     ]
 
     # create a list of colors
-    # each color is a string in the format "rgb(r, g, b)"
-    # where r, g, b are integers between 0 and 255
-    # take a random value for r, g, b
-    rgb_values = []
-    for place in places:
-        r = random.randint(0, 255)
-        g = random.randint(0, 255)
-        b = random.randint(0, 255)
-        rgb_values.append(f"rgb({r}, {g}, {b})")
+    # this list is as long as the places list
+    # there's a color for each player
+    # since we have 5 players, we have 5 colors
+    # the colors are either red, green, blue, yellow, or purple
+    player_colors = ["red", "green", "blue", "yellow", "purple"]
+    colors = random.choices(player_colors,
+                            k=len(places))
 
-    places = [{"name": place, "color": rgb} for place, rgb in zip(places, rgb_values)]
-    print(places)
+    places = [{"name": place, "color": color} for place, color in zip(places, colors)]
 
     return render_template("index.html", places=places)
-
 
 if __name__ == "__main__":
     app.run(debug=True)
