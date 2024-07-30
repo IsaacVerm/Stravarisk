@@ -4,3 +4,23 @@
     grid-template-rows: repeat(6, 1fr);
     height: 98vh;
 }
+
+.place[player="Jonas"] {
+    background-color: green;
+}
+
+.place[player="Johannes"] {
+    background-color: red;
+}
+
+.place[player="Nicolas"] {
+    background-color: blue;
+}
+
+.place[player="Jeroen"] {
+    background-color: yellow;
+}
+
+.place[player="Isaac"] {
+    background-color: orange;
+}
