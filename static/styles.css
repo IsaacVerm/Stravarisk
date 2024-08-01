@@ -2,5 +2,9 @@
     display: grid;
     grid-template-columns: repeat(6, 1fr);
     grid-template-rows: repeat(6, 1fr);
-    height: 98vh;
+    height: 100vh;
+}
+
+body {
+    margin: 0;
 }
