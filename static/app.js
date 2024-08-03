@@ -25,11 +25,35 @@ function addPlaces() {
 }
 
 /*
-if you click on a place the name of place is displayed in the console
+if you click on a place:
+- the place is selected if the player owns it
+- an alert is shown if the player does not own the place
+- if you click on a place that is already selected, it's unselected
 */
 function selectPlace(event) {
+    // get data needed to make decision what to select or unselect
     const selectedPlace = event.target;
-    console.log(selectedPlace.getAttribute('place'));
+    const player = localStorage.getItem('player');
+    const placePlayer = selectedPlace.getAttribute('player');
+
+    // do you own the place selected?
+    // if not, an alert is shown
+    if (player != placePlayer) {
+        alert('You do not own this place!');
+    }
+
+    // if you own the place
+    // but it's already selected, unselect it
+    if (player === placePlayer && selectedPlace.classList.contains('selected')) {
+        selectedPlace.classList.remove('selected');
+        return
+    }
+
+    // if you do own the place
+    // select the place if it's not already selected
+    if (player === placePlayer && !selectedPlace.classList.contains('selected')) {
+        selectedPlace.classList.add('selected');
+    }
 }
 
 // assign test player to localStorage

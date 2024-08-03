@@ -24,3 +24,7 @@
 .place[player="Isaac"] {
     background-color: orange;
 }
+
+.selected {
+    border: 3px solid black;
+}
