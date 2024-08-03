@@ -24,4 +24,17 @@ function addPlaces() {
         .catch(error => console.error('Error fetching data:', error));
 }
 
-document.addEventListener('DOMContentLoaded', addPlaces);
+/*
+if you click on a place the name of place is displayed in the console
+*/
+function selectPlace(event) {
+    const selectedPlace = event.target;
+    console.log(selectedPlace.getAttribute('place'));
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    addPlaces();
+    // the DOM has to load with the places element before you can any event listeners to it
+    document.getElementById('places').addEventListener('click', selectPlace);
+});
+
