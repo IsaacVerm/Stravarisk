@@ -32,6 +32,9 @@ function selectPlace(event) {
     console.log(selectedPlace.getAttribute('place'));
 }
 
+// assign test player to localStorage
+localStorage.setItem('player', 'Isaac');
+
 document.addEventListener('DOMContentLoaded', () => {
     addPlaces();
     // the DOM has to load with the places element before you can any event listeners to it
