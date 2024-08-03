@@ -23,6 +23,32 @@ def get_holdings():
     # return holdings as JSON
     return jsonify(holdings)
 
+@app.route("/api/reinforcements", methods=["GET"])
+def get_reinforcements():
+    # connect to the database
+    connection = sqlite3.connect('stravarisk.sqlite')
+    cursor = connection.cursor()
+    
+    # fetch rides from the database
+    rides = [{"player": player, "timestamp": timestamp, "distance": distance} for player, timestamp, distance in cursor.execute("SELECT player, timestamp, distance FROM rides").fetchall()]
+    
+    # calculate reinforcements
+    # for each 50000 meters, a player gets 1 reinforcement
+    # no partial reinforcements are given
+    reinforcements = {}
+    for ride in rides:
+        player = ride["player"]
+        distance = ride["distance"]
+        if player not in reinforcements:
+            reinforcements[player] = 0
+        reinforcements[player] += int(distance / 50000) # int rounds down
+        
+    # close the database connection
+    connection.close()
+    
+    # return reinforcements as JSON
+    return jsonify(reinforcements)
+    
 @app.route("/")
 def home():
     return render_template("index.html")
