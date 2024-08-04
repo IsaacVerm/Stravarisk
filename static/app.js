@@ -10,6 +10,9 @@ async function initializeState() {
         .then(response => response.json())
         .then(holdings => {
             state.holdings = holdings;
+            // add a field deployment to each holding
+            // value is 0 now since we haven't deployed any armies yet
+            state.holdings.forEach(holding => holding.deployments = 0);
         })
         .catch(error => console.error('Error fetching data:', error));
 
@@ -42,9 +45,7 @@ function renderPlaces() {
     });
 }
 
-function checkPlaceOwned(place) {
-    return state.holdings.filter(holding => holding.place === place)[0].player === state.currentPlayer;
-}
+/* state manipulation functions */
 
 function increaseArmyCount(place) {
     state.holdings.filter(holding => holding.place === place)[0].army_count++;
@@ -53,6 +54,39 @@ function increaseArmyCount(place) {
 function decreaseArmyCount(place) {
     state.holdings.filter(holding => holding.place === place)[0].army_count--;
 }
+
+function increaseReinforcements(player) {
+    state.reinforcements[player]++;
+}
+
+function decreaseReinforcements(player) {
+    state.reinforcements[player]--;
+}
+
+/*
+deployments are linked to both a place and a player
+but since only 1 player can be owner of a place at a given time, we don't have to keep track of it here
+*/
+
+function increaseDeployments(place) {
+    state.holdings.filter(holding => holding.place === place)[0].deployments++;
+}
+
+function decreaseDeployments(place) {
+    state.holdings.filter(holding => holding.place === place)[0].deployments--;
+}
+
+/* checking functions */
+
+function checkDeploymentsLeft() {
+    return state.reinforcements[state.currentPlayer] > 0;
+}
+
+function checkPlaceOwned(place) {
+    return state.holdings.filter(holding => holding.place === place)[0].player === state.currentPlayer;
+}
+
+/* rendering functions */
 
 function renderArmyCountPlace(place) {
     // select place element
@@ -71,15 +105,23 @@ function handleSelectPlace(event) {
 
     if (leftClick|rightClick && !checkPlaceOwned(place)) {
         alert('You do not own this place!');
+        return;
+    }
+
+    if (leftClick && checkPlaceOwned(place) && !checkDeploymentsLeft()) {
+        alert('You have no more reinforcements left!');
+        return; // without return there will still be 1 army added after the stock of reinforcements is depleted
     }
 
     if (leftClick && checkPlaceOwned(place)) {
         increaseArmyCount(place);
+        decreaseReinforcements(state.currentPlayer);
         renderArmyCountPlace(place);
     }
 
     if (rightClick && checkPlaceOwned(place)) {
         decreaseArmyCount(place);
+        increaseReinforcements(state.currentPlayer);
         renderArmyCountPlace(place);
     }
 }
