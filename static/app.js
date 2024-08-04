@@ -1,6 +1,7 @@
 let state = {
     holdings: null,
-    reinforcements: null
+    reinforcements: null,
+    currentPlayer: "Isaac"
 }
 
 async function initializeState() {
@@ -52,31 +53,27 @@ if you click on a place:
 function selectPlace(event) {
     // get data needed to make decision what to select or unselect
     const selectedPlace = event.target;
-    const player = localStorage.getItem('player');
     const placePlayer = selectedPlace.getAttribute('player');
 
     // do you own the place selected?
     // if not, an alert is shown
-    if (player != placePlayer) {
+    if (state.currentPlayer != placePlayer) {
         alert('You do not own this place!');
     }
 
     // if you own the place
     // but it's already selected, unselect it
-    if (player === placePlayer && selectedPlace.classList.contains('selected')) {
+    if (state.currentPlayer === placePlayer && selectedPlace.classList.contains('selected')) {
         selectedPlace.classList.remove('selected');
         return
     }
 
     // if you do own the place
     // select the place if it's not already selected
-    if (player === placePlayer && !selectedPlace.classList.contains('selected')) {
+    if (state.currentPlayer === placePlayer && !selectedPlace.classList.contains('selected')) {
         selectedPlace.classList.add('selected');
     }
 }
-
-// assign test player to localStorage
-localStorage.setItem('player', 'Isaac');
 
 document.addEventListener('DOMContentLoaded', () => {
     initializeState().then(() => {
