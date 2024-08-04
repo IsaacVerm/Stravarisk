@@ -1,17 +1,18 @@
 let state = {
     holdings: null,
-    reinforcements: null 
+    reinforcements: null
 }
 
-function initializeState() {
-    fetch('/api/holdings')
+async function initializeState() {
+    // async/await because we want to have the state initialized before we render anything else like the places
+    await fetch('/api/holdings')
         .then(response => response.json())
         .then(holdings => {
             state.holdings = holdings;
         })
         .catch(error => console.error('Error fetching data:', error));
 
-    fetch('/api/reinforcements')
+    await fetch('/api/reinforcements')
         .then(response => response.json())
         .then(reinforcements => {
             state.reinforcements = reinforcements;
@@ -25,24 +26,21 @@ add places on load:
 - create an element for each place filled in with holding data
 */
 
-function addPlaces() {
-    fetch('/api/holdings')
-        .then(response => response.json())
-        .then(holdings => {
-            const placesElement = document.getElementById('places');
-            holdings.forEach(holding => {
-                const placeElement = document.createElement('div');
-                placeElement.setAttribute('class', 'place');
-                placeElement.setAttribute('place', holding.place);
-                placeElement.setAttribute('player', holding.player);
-                placeElement.setAttribute('army_count', holding.army_count);
+function renderPlaces() {
+    const placesElement = document.getElementById('places');
 
-                placeElement.textContent = holding.army_count;
+    state.holdings.forEach(holding => {
+        const placeElement = document.createElement('div');
 
-                placesElement.appendChild(placeElement);
-            });
-        })
-        .catch(error => console.error('Error fetching data:', error));
+        placeElement.setAttribute('class', 'place');
+        placeElement.setAttribute('place', holding.place);
+        placeElement.setAttribute('player', holding.player);
+        placeElement.setAttribute('army_count', holding.army_count);
+
+        placeElement.textContent = holding.army_count;
+
+        placesElement.appendChild(placeElement);
+    });
 }
 
 /*
@@ -81,9 +79,10 @@ function selectPlace(event) {
 localStorage.setItem('player', 'Isaac');
 
 document.addEventListener('DOMContentLoaded', () => {
-    initializeState();
-    addPlaces();
-    // the DOM has to load with the places element before you can any event listeners to it
-    document.getElementById('places').addEventListener('click', selectPlace);
+    initializeState().then(() => {
+        renderPlaces();
+        // the DOM has to load with the places element before you can any event listeners to it
+        document.getElementById('places').addEventListener('click', selectPlace);
+    });
 });
 
