@@ -8,3 +8,23 @@
 body {
     margin: 0;
 }
+
+.place[player="Jonas"] {
+    background-color: green;
+}
+
+.place[player="Johannes"] {
+    background-color: red;
+}
+
+.place[player="Nicolas"] {
+    background-color: blue;
+}
+
+.place[player="Jeroen"] {
+    background-color: yellow;
+}
+
+.place[player="Isaac"] {
+    background-color: orange;
+}

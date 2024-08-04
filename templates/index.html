@@ -7,9 +7,6 @@
 <body>
     <script src="{{ url_for('static', filename='app.js') }}"></script>
     <div id="places">
-        {% for place in places %}
-        <div name="{{ place.name }}" class="place" style="background-color: {{ place.color }};"></div>
-        {% endfor %}
     </div>
 </body>
 </html>
