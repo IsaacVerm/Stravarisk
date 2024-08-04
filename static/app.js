@@ -24,27 +24,6 @@ async function initializeState() {
         .catch(error => console.error('Error fetching data:', error));
 }
 
-function renderPlace(holding, placesElement) {
-    const placeElement = document.createElement('div');
-
-    placeElement.setAttribute('class', 'place');
-    placeElement.setAttribute('place', holding.place);
-    placeElement.setAttribute('player', holding.player);
-    placeElement.setAttribute('army_count', holding.army_count);
-
-    placeElement.textContent = holding.army_count;
-
-    placesElement.appendChild(placeElement);
-}
-
-function renderPlaces() {
-    const placesElement = document.getElementById('places');
-
-    state.holdings.forEach(holding => {
-        renderPlace(holding, placesElement);
-    });
-}
-
 /* state manipulation functions */
 
 function increaseArmyCount(place) {
@@ -61,6 +40,14 @@ function increaseReinforcements(player) {
 
 function decreaseReinforcements(player) {
     state.reinforcements[player]--;
+}
+
+function increaseDeployments(place) {
+    state.holdings.filter(holding => holding.place === place)[0].deployments++;
+}
+
+function decreaseDeployments(place) {
+    state.holdings.filter(holding => holding.place === place)[0].deployments--;
 }
 
 /*
@@ -86,6 +73,10 @@ function checkPlaceOwned(place) {
     return state.holdings.filter(holding => holding.place === place)[0].player === state.currentPlayer;
 }
 
+function checkAnyDeploymentsPlace(place) {
+    return state.holdings.filter(holding => holding.place === place)[0].deployments > 0;
+}
+
 /* rendering functions */
 
 function renderArmyCountPlace(place) {
@@ -96,35 +87,68 @@ function renderArmyCountPlace(place) {
     placeElement.textContent = state.holdings.filter(holding => holding.place === place)[0].army_count;
 }
 
+function renderPlace(holding, placesElement) {
+    const placeElement = document.createElement('div');
+
+    placeElement.setAttribute('class', 'place');
+    placeElement.setAttribute('place', holding.place);
+    placeElement.setAttribute('player', holding.player);
+    placeElement.setAttribute('army_count', holding.army_count);
+
+    placeElement.textContent = holding.army_count;
+
+    placesElement.appendChild(placeElement);
+}
+
+function renderPlaces() {
+    const placesElement = document.getElementById('places');
+
+    state.holdings.forEach(holding => {
+        renderPlace(holding, placesElement);
+    });
+}
+
+/* functions to handle actions */
+
 function handleSelectPlace(event) {
-    const selectedPlace = event.target;
-    const place = selectedPlace.getAttribute('place');
+    const place = event.target.getAttribute('place');
 
     const leftClick = event.button === 0;
     const rightClick = event.button === 2;
 
     if (leftClick|rightClick && !checkPlaceOwned(place)) {
-        alert('You do not own this place!');
+        alert('You do not own this place.');
         return;
     }
 
     if (leftClick && checkPlaceOwned(place) && !checkDeploymentsLeft()) {
-        alert('You have no more reinforcements left!');
+        alert('You have no more reinforcements left.');
         return; // without return there will still be 1 army added after the stock of reinforcements is depleted
+    }
+
+    if (rightClick && checkPlaceOwned(place) && !checkAnyDeploymentsPlace(place)) {
+        alert('You did not deploy armies to this place before so can you cannot remove any armies from it either.');
+        return;
     }
 
     if (leftClick && checkPlaceOwned(place)) {
         increaseArmyCount(place);
+        increaseDeployments(place);
         decreaseReinforcements(state.currentPlayer);
+        
         renderArmyCountPlace(place);
     }
 
-    if (rightClick && checkPlaceOwned(place)) {
+    if (rightClick && checkPlaceOwned(place) && checkAnyDeploymentsPlace(place)) {
         decreaseArmyCount(place);
+        decreaseDeployments(place);
         increaseReinforcements(state.currentPlayer);
+
         renderArmyCountPlace(place);
     }
 }
+
+/* setup game and adding event listeners */
 
 document.addEventListener('DOMContentLoaded', () => {
     initializeState().then(() => {
