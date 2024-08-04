@@ -1,3 +1,24 @@
+let state = {
+    holdings: null,
+    reinforcements: null 
+}
+
+function initializeState() {
+    fetch('/api/holdings')
+        .then(response => response.json())
+        .then(holdings => {
+            state.holdings = holdings;
+        })
+        .catch(error => console.error('Error fetching data:', error));
+
+    fetch('/api/reinforcements')
+        .then(response => response.json())
+        .then(reinforcements => {
+            state.reinforcements = reinforcements;
+        })
+        .catch(error => console.error('Error fetching data:', error));
+}
+
 /*
 add places on load:
 - fetch data from /api/holdings
@@ -60,6 +81,7 @@ function selectPlace(event) {
 localStorage.setItem('player', 'Isaac');
 
 document.addEventListener('DOMContentLoaded', () => {
+    initializeState();
     addPlaces();
     // the DOM has to load with the places element before you can any event listeners to it
     document.getElementById('places').addEventListener('click', selectPlace);
